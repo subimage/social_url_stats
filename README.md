@@ -7,11 +7,16 @@ Give this ruby gem a URL, it will give you back how many times it's been shared 
 - Facebook 
   - Shares
   - Likes
-- Twitter Shares
-- Pinterest Shares
-- LinkedIn Shares
-- Stumbleupon Shares
-- Google+ Shares
+- Twitter
+  - Tweets
+- Pinterest
+  - Pins
+- LinkedIn
+  - Shares
+- Stumbleupon
+  - Stumbles
+- Google
+  - +1s
 
 Code liberally lifted from @maricris-sn, and turned into a gem with the intention to improve and maintain it. Original code here: https://gist.github.com/maricris-sn/7082858
 
@@ -31,7 +36,19 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Using is fairly simple…
+
+    # Instantiate a SUS counter…
+    sus = SocialUrlStats::Counter.new('http://cashboardapp.com')
+
+    # Grab stats for your favorite social networks…
+    sus.fb_shares
+    sus.fb_likes
+    sus.tweets
+    sus.pins
+    sus.linkedin_shares
+    sus.stumbles
+    sus.gplus_ones
 
 ## Contributing
 
