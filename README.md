@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SocialUrlStats
 
 Give this ruby gem a URL, it will give you back how many times it's been shared / liked across various social networks.
@@ -31,3 +32,9 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+=======
+social_url_stats
+================
+
+Give this ruby gem a URL, it will give you back how many times it's been shared / liked across various social networks.
+>>>>>>> 235d02ca2a79632c7d05308ddf29ad768fa6b1a1
