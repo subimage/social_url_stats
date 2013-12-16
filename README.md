@@ -2,9 +2,18 @@
 
 Give this ruby gem a URL, it will give you back how many times it's been shared / liked across various social networks.
 
-Code liberally lifted from @maricris-sn, and turned into a gem with the intention to improve and maintain it.
+**Currently polls**
 
-Original code here: https://gist.github.com/maricris-sn/7082858
+- Facebook 
+  - Shares
+  - Likes
+- Twitter Shares
+- Pinterest Shares
+- LinkedIn Shares
+- Stumbleupon Shares
+- Google+ Shares
+
+Code liberally lifted from @maricris-sn, and turned into a gem with the intention to improve and maintain it. Original code here: https://gist.github.com/maricris-sn/7082858
 
 ## Installation
 
