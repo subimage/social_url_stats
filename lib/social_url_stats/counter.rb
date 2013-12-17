@@ -1,5 +1,12 @@
+require 'timeout'
+require 'socket'
+
 class SocialUrlStats::Counter
   attr_reader :url
+
+  HANDLED_OPEN_URI_EXCEPTIONS = [
+    OpenURI::HTTPError, Timeout::Error, SocketError
+  ]
 
   # Initialize with a URL, then use the methods below to get SUS.
   def initialize(url)
@@ -7,57 +14,65 @@ class SocialUrlStats::Counter
   end
 
   def fb_shares
-    response = get_fb_graph
-    shares = JSON.parse(response)['shares']
-    return shares.nil? ? 0 : JSON.parse(response)['shares'].to_i
+    r = get_fb_graph
+    return nil unless r 
+    JSON.parse(r)['shares'].to_i
   end
 
   def fb_likes
-    response = get_fb_graph
-    likes = JSON.parse(response)['likes']
-    return likes.nil? ? 0 : JSON.parse(response)['likes'].to_i
+    r = get_fb_graph
+    return nil unless r 
+    JSON.parse(r)['likes'].to_i
   end
  
   def tweets
-    f = open("https://cdn.api.twitter.com/1/urls/count.json?url=#{@url}")
-    return JSON.parse(f.read())['count'].to_i
+    r = get_response("https://cdn.api.twitter.com/1/urls/count.json?url=#{@url}")
+    return nil unless r 
+    JSON.parse(r)['count'].to_i
   end
  
   # Pinterest pins
   def pins
-    f = open("http://api.pinterest.com/v1/urls/count.json?url=#{@url}")
-    return JSON.parse(f.read().gsub('receiveCount(','').gsub(')',''))['count'].to_i
+    r = get_response("http://api.pinterest.com/v1/urls/count.json?url=#{@url}")
+    return nil unless r 
+    JSON.parse(r.gsub('receiveCount(','').gsub(')',''))['count'].to_i
   end
  
   def linkedin_shares
-    f = open("http://www.linkedin.com/countserv/count/share?url=#{@url}&format=json")
-    return JSON.parse(f.read())['count'].to_i
+    r = get_response("http://www.linkedin.com/countserv/count/share?url=#{@url}&format=json")
+    return nil unless r 
+    JSON.parse(r)['count'].to_i
   end
  
   # StumbleUpon shares
   def stumbles
-    f = open("http://www.stumbleupon.com/services/1.01/badge.getinfo?url=#{@url}")
-    response = f.read()
-    views = JSON.parse(response)['result']['views']
-    return views.blank? ? 0 : JSON.parse(response)['result']['views'].to_i
+    r = get_response("http://www.stumbleupon.com/services/1.01/badge.getinfo?url=#{@url}")
+    return nil unless r 
+    JSON.parse(r)['result']['views'].to_i
   end
  
   # Google+
   def gplus_ones
-    f = open("https://plusone.google.com/_/+1/fastbutton?url=#{URI::encode(url)}")
-    response = f.read()
-    shares = response[/window.__SSR = {c\: \d+.\d+/]
-    return shares.nil? ? 0 : shares[/\d+.\d+/].to_i
+    r = get_response("https://plusone.google.com/_/+1/fastbutton?url=#{URI::encode(url)}")
+    return nil unless r 
+    shares = r[/window.__SSR = {c\: \d+.\d+/]
+    shares[/\d+.\d+/].to_i
   end
 
   protected
+
+    def get_response(full_url)
+      f = Timeout::timeout(10) { open(full_url) }
+      response = f.read()
+    rescue *HANDLED_OPEN_URI_EXCEPTIONS
+      return nil
+    end
 
     # Store fb graph response so we don't make 2 hits if
     # getting shares & likes
     def get_fb_graph
       @fb_response ||= begin
-        f = open("http://graph.facebook.com/?id=#{@url}")
-        f.read()
+        get_response("http://graph.facebook.com/?id=#{@url}")
       end
     end
 end

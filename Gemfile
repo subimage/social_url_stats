@@ -10,4 +10,5 @@ group :test do
   gem 'vcr'
   gem 'minitest'
   gem 'mocha', require: false
+  gem 'webmock'
 end
