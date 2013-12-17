@@ -22,6 +22,19 @@ class CounterTest < Minitest::Test
       assert_equal 0, count
     end
   end
+
+  # Ensure that we only hit the URL once if getting likes / shares
+  def test_fb_graph_shared
+    response = mock
+    response.expects(:read)
+      .times(1)
+      .returns("{\"id\":\"http:\\/\\/subimage.com\",\"shares\":10}")
+    @sus.expects(:open).times(1).returns(response)
+    VCR.use_cassette('social_url_stats') do
+      @sus.fb_shares
+      @sus.fb_likes
+    end
+  end
  
   def test_tweets
     VCR.use_cassette('social_url_stats') do

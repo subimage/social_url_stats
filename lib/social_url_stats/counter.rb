@@ -7,15 +7,13 @@ class SocialUrlStats::Counter
   end
 
   def fb_shares
-    f = open("http://graph.facebook.com/?id=#{@url}")
-    response = f.read()
+    response = get_fb_graph
     shares = JSON.parse(response)['shares']
     return shares.nil? ? 0 : JSON.parse(response)['shares'].to_i
   end
 
   def fb_likes
-    f = open("http://graph.facebook.com/?id=#{@url}")
-    response = f.read()
+    response = get_fb_graph
     likes = JSON.parse(response)['likes']
     return likes.nil? ? 0 : JSON.parse(response)['likes'].to_i
   end
@@ -51,4 +49,15 @@ class SocialUrlStats::Counter
     shares = response[/window.__SSR = {c\: \d+.\d+/]
     return shares.nil? ? 0 : shares[/\d+.\d+/].to_i
   end
+
+  protected
+
+    # Store fb graph response so we don't make 2 hits if
+    # getting shares & likes
+    def get_fb_graph
+      @fb_response ||= begin
+        f = open("http://graph.facebook.com/?id=#{@url}")
+        f.read()
+      end
+    end
 end

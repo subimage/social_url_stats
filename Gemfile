@@ -9,4 +9,5 @@ gem 'active_support'
 group :test do
   gem 'vcr'
   gem 'minitest'
+  gem 'mocha', require: false
 end
